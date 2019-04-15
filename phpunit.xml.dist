@@ -10,7 +10,7 @@
     convertWarningsToExceptions="true"
     stopOnFailure="false">
     <testsuites>
-        <testsuite name="Yii Mutex tests">
+        <testsuite name="Yii Mutex - MySQL Driver tests">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
