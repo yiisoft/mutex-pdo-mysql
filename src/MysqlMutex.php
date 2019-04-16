@@ -29,7 +29,7 @@ class MysqlMutex extends Mutex
      *                          to true means that all locks acquired in this process must be released (regardless of
      *                          errors or exceptions).
      */
-    public function __construct(\PDO $connection, $autoRelease = true)
+    public function __construct(\PDO $connection, bool $autoRelease = true)
     {
         $this->connection = $connection;
         $driverName = $connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
@@ -50,7 +50,7 @@ class MysqlMutex extends Mutex
      *
      * @see http://dev.mysql.com/doc/refman/5.0/en/miscellaneous-functions.html#function_get-lock
      */
-    protected function acquireLock($name, $timeout = 0)
+    protected function acquireLock(string $name, int $timeout = 0): bool
     {
         $statement = $this->connection->prepare('SELECT GET_LOCK(:name, :timeout)');
         $statement->bindValue(':name', $this->hashLockName($name));
@@ -69,7 +69,7 @@ class MysqlMutex extends Mutex
      *
      * @see http://dev.mysql.com/doc/refman/5.0/en/miscellaneous-functions.html#function_release-lock
      */
-    protected function releaseLock($name)
+    protected function releaseLock(string $name): bool
     {
         $statement = $this->connection->prepare('SELECT RELEASE_LOCK(:name)');
         $statement->bindValue(':name', $this->hashLockName($name));
@@ -88,7 +88,7 @@ class MysqlMutex extends Mutex
      * @since 2.0.16
      * @see https://github.com/yiisoft/yii2/pull/16836
      */
-    protected function hashLockName($name)
+    protected function hashLockName(string $name): string
     {
         return sha1($name);
     }
