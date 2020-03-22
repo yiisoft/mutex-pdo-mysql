@@ -28,7 +28,7 @@ class MysqlMutex extends Mutex
         $this->connection = $connection;
         $driverName = $connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
         if ($driverName !== 'mysql') {
-            throw new \InvalidArgumentException('MySQL connection instance should be passed. Got '.$driverName.'.');
+            throw new \InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
         }
 
         parent::__construct($autoRelease);
