@@ -29,7 +29,7 @@
         "phpunit/phpunit": "^9.3",
         "squizlabs/php_codesniffer": "^3.2",
         "yiisoft/composer-config-plugin": "^1.0@dev",
-        "phan/phan": "^3.0"
+        "phan/phan": "^3.2"
     },
     "autoload": {
         "psr-4": {
