@@ -6,6 +6,7 @@ namespace Yiisoft\Mutex;
 
 use InvalidArgumentException;
 use PDO;
+use RuntimeException;
 
 /**
  * MysqlMutex implements mutex "lock" mechanism via MySQL locks.
@@ -66,7 +67,9 @@ final class MysqlMutex implements MutexInterface
         $statement->bindValue(':name', $this->hashLockName($this->name));
         $statement->execute();
 
-        $statement->fetchColumn();
+        if (!$statement->fetchColumn()) {
+            throw new RuntimeException("Unable to release lock \"$this->name\".");
+        }
     }
 
     /**

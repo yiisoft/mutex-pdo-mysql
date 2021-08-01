@@ -4,15 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Mutex\Tests;
 
+use Yiisoft\Mutex\MutexInterface;
 use Yiisoft\Mutex\MysqlMutex;
 
-/**
- * Class MysqlMutexTest.
- *
- * @group mutex
- * @group db
- * @group mysql
- */
 class MysqlMutexTest
 {
     use MutexTestTrait;
@@ -20,7 +14,7 @@ class MysqlMutexTest
     /**
      * @return MysqlMutex
      */
-    protected function createMutex()
+    protected function createMutex(): MutexInterface
     {
         return new MysqlMutex('test', $this->getConnection());
     }

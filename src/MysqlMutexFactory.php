@@ -12,7 +12,7 @@ use Yiisoft\Mutex\MysqlMutex;
 /**
  * Allows creating {@see MysqlMutex} mutex objects.
  */
-class MysqlMutexFactory implements MutexFactoryInterface
+final class MysqlMutexFactory implements MutexFactoryInterface
 {
     private PDO $connection;
     private bool $autoRelease;
