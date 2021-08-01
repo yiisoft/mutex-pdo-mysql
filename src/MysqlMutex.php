@@ -75,6 +75,7 @@ final class MysqlMutex implements MutexInterface
      * @param string $name
      *
      * @return string
+     *
      * @see https://github.com/yiisoft/yii2/pull/16836
      */
     private function hashLockName(string $name): string
