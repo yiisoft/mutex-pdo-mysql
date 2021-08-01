@@ -22,10 +22,10 @@ class MysqlMutexTest
      */
     protected function createMutex()
     {
-        return new MysqlMutex($this->getConnection());
+        return new MysqlMutex('test', $this->getConnection());
     }
 
-    private function getConnection()
+    private function getConnection(): PDO
     {
         // TODO: create MySQL connection here
     }
