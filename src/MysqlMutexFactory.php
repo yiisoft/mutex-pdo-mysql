@@ -10,7 +10,7 @@ use Yiisoft\Mutex\MutexInterface;
 use Yiisoft\Mutex\MysqlMutex;
 
 /**
- * Allows creating file mutex objects.
+ * Allows creating {@see MysqlMutex} mutex objects.
  */
 class MysqlMutexFactory implements MutexFactoryInterface
 {
