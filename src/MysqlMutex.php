@@ -4,52 +4,52 @@ declare(strict_types=1);
 
 namespace Yiisoft\Mutex;
 
+use InvalidArgumentException;
+use PDO;
+use RuntimeException;
+
 /**
  * MysqlMutex implements mutex "lock" mechanism via MySQL locks.
- *
- * @see Mutex
  */
-class MysqlMutex extends Mutex
+final class MysqlMutex implements MutexInterface
 {
-    /**
-     * @var \PDO
-     */
-    protected $connection;
+    private string $name;
+    private PDO $connection;
 
     /**
      * DbMutex constructor.
      *
-     * @param \PDO $connection
-     * @param bool $autoRelease whether all locks acquired in this process (i.e. local locks) must be released
-     *                          automatically before finishing script execution. Defaults to true. Setting this property
-     *                          to true means that all locks acquired in this process must be released (regardless of
-     *                          errors or exceptions).
+     * @param PDO $connection PDO connection instance to use.
+     * @param bool $autoRelease Whether all locks acquired in this process (i.e. local locks) must be released
+     * automatically before finishing script execution. Defaults to true. Setting this property
+     * to true means that all locks acquired in this process must be released (regardless of
+     * errors or exceptions).
      */
-    public function __construct(\PDO $connection, bool $autoRelease = true)
+    public function __construct(string $name, PDO $connection, bool $autoRelease = true)
     {
+        $this->name = $name;
         $this->connection = $connection;
-        $driverName = $connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driverName !== 'mysql') {
-            throw new \InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
+            throw new InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
         }
 
-        parent::__construct($autoRelease);
+        if ($autoRelease) {
+            register_shutdown_function(function () {
+                $this->release();
+            });
+        }
     }
 
     /**
-     * Acquires lock by given name.
-     *
-     * @param string $name    of the lock to be acquired.
-     * @param int    $timeout time (in seconds) to wait for lock to become released.
-     *
-     * @return bool acquiring result.
+     * {@inheritdoc}
      *
      * @see http://dev.mysql.com/doc/refman/5.0/en/miscellaneous-functions.html#function_get-lock
      */
-    protected function acquireLock(string $name, int $timeout = 0): bool
+    public function acquire(int $timeout = 0): bool
     {
         $statement = $this->connection->prepare('SELECT GET_LOCK(:name, :timeout)');
-        $statement->bindValue(':name', $this->hashLockName($name));
+        $statement->bindValue(':name', $this->hashLockName($this->name));
         $statement->bindValue(':timeout', $timeout);
         $statement->execute();
 
@@ -57,21 +57,19 @@ class MysqlMutex extends Mutex
     }
 
     /**
-     * Releases lock by given name.
-     *
-     * @param string $name of the lock to be released.
-     *
-     * @return bool release result.
+     * {@inheritdoc}
      *
      * @see http://dev.mysql.com/doc/refman/5.0/en/miscellaneous-functions.html#function_release-lock
      */
-    protected function releaseLock(string $name): bool
+    public function release(): void
     {
         $statement = $this->connection->prepare('SELECT RELEASE_LOCK(:name)');
-        $statement->bindValue(':name', $this->hashLockName($name));
+        $statement->bindValue(':name', $this->hashLockName($this->name));
         $statement->execute();
 
-        return $statement->fetchColumn();
+        if (!$statement->fetchColumn()) {
+            throw new RuntimeException("Unable to release lock \"$this->name\".");
+        }
     }
 
     /**
@@ -81,10 +79,9 @@ class MysqlMutex extends Mutex
      *
      * @return string
      *
-     * @since 2.0.16
      * @see https://github.com/yiisoft/yii2/pull/16836
      */
-    protected function hashLockName(string $name): string
+    private function hashLockName(string $name): string
     {
         return sha1($name);
     }
