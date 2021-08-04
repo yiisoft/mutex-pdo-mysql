@@ -1,7 +1,7 @@
 {
-    "name": "yiisoft/mutex-db-mysql",
+    "name": "yiisoft/mutex-pdo-mysql",
     "type": "library",
-    "description": "Yii Mutex Library - MySQL DB Driver",
+    "description": "Yii Mutex Library - MySQL PDO Driver",
     "keywords": [
         "yii",
         "mutex"
@@ -9,8 +9,8 @@
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "source": "https://github.com/yiisoft/mutex-db-mysql",
-        "issues": "https://github.com/yiisoft/mutex-db-mysql/issues",
+        "source": "https://github.com/yiisoft/mutex-pdo-mysql",
+        "issues": "https://github.com/yiisoft/mutex-pdo-mysql/issues",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii"
