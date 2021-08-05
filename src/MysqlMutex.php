@@ -11,33 +11,25 @@ use RuntimeException;
 /**
  * MysqlMutex implements mutex "lock" mechanism via MySQL locks.
  */
-final class MysqlMutex implements MutexInterface
+final class MysqlMutex extends Mutex
 {
     private string $name;
     private PDO $connection;
+    private bool $released = false;
 
     /**
      * DbMutex constructor.
      *
+     * @param string $name Mutex name.
      * @param PDO $connection PDO connection instance to use.
-     * @param bool $autoRelease Whether all locks acquired in this process (i.e. local locks) must be released
-     * automatically before finishing script execution. Defaults to true. Setting this property
-     * to true means that all locks acquired in this process must be released (regardless of
-     * errors or exceptions).
      */
-    public function __construct(string $name, PDO $connection, bool $autoRelease = true)
+    public function __construct(string $name, PDO $connection)
     {
         $this->name = $name;
         $this->connection = $connection;
         $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driverName !== 'mysql') {
             throw new InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
-        }
-
-        if ($autoRelease) {
-            register_shutdown_function(function () {
-                $this->release();
-            });
         }
     }
 
@@ -52,8 +44,13 @@ final class MysqlMutex implements MutexInterface
         $statement->bindValue(':name', $this->hashLockName($this->name));
         $statement->bindValue(':timeout', $timeout);
         $statement->execute();
+        
+        if ($statement->fetchColumn()) {
+            $this->released = false;
+            return true;
+        }
 
-        return $statement->fetchColumn();
+        return false;
     }
 
     /**
@@ -70,6 +67,13 @@ final class MysqlMutex implements MutexInterface
         if (!$statement->fetchColumn()) {
             throw new RuntimeException("Unable to release lock \"$this->name\".");
         }
+        
+        $this->released = true;
+    }
+    
+    public function isReleased(): bool
+    {
+        return $this->released;
     }
 
     /**
