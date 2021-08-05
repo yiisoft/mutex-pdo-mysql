@@ -44,7 +44,7 @@ final class MysqlMutex extends Mutex
         $statement->bindValue(':name', $this->hashLockName($this->name));
         $statement->bindValue(':timeout', $timeout);
         $statement->execute();
-        
+
         if ($statement->fetchColumn()) {
             $this->released = false;
             return true;
@@ -67,10 +67,10 @@ final class MysqlMutex extends Mutex
         if (!$statement->fetchColumn()) {
             throw new RuntimeException("Unable to release lock \"$this->name\".");
         }
-        
+
         $this->released = true;
     }
-    
+
     public function isReleased(): bool
     {
         return $this->released;
