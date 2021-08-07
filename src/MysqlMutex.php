@@ -32,7 +32,7 @@ final class MysqlMutex implements MutexInterface
             throw new InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
         }
     }
-    
+
     public function __destruct()
     {
         if (!$this->released) {
