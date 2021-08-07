@@ -11,7 +11,7 @@ use RuntimeException;
 /**
  * MysqlMutex implements mutex "lock" mechanism via MySQL locks.
  */
-final class MysqlMutex extends Mutex
+final class MysqlMutex implements MutexInterface
 {
     private string $name;
     private PDO $connection;
@@ -30,6 +30,13 @@ final class MysqlMutex extends Mutex
         $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driverName !== 'mysql') {
             throw new InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
+        }
+    }
+    
+    public function __destruct()
+    {
+        if (!$this->released) {
+            $this->release();
         }
     }
 
@@ -69,11 +76,6 @@ final class MysqlMutex extends Mutex
         }
 
         $this->released = true;
-    }
-
-    public function isReleased(): bool
-    {
-        return $this->released;
     }
 
     /**
