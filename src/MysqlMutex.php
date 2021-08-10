@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 
+use function sha1;
+
 /**
  * MysqlMutex implements mutex "lock" mechanism via MySQL locks.
  */
@@ -18,8 +20,6 @@ final class MysqlMutex implements MutexInterface
     private bool $released = false;
 
     /**
-     * DbMutex constructor.
-     *
      * @param string $name Mutex name.
      * @param PDO $connection PDO connection instance to use.
      */
@@ -27,7 +27,10 @@ final class MysqlMutex implements MutexInterface
     {
         $this->name = $name;
         $this->connection = $connection;
+
+        /** @var string $driverName */
         $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+
         if ($driverName !== 'mysql') {
             throw new InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
         }
