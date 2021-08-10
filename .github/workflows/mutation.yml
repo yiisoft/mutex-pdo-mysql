@@ -27,7 +27,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: root-password
           MYSQL_DATABASE: yiitest
         ports:
           - 3306:3306

@@ -23,7 +23,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             $this->connection = new PDO(
                 'mysql:host=127.0.0.1;dbname=yiitest',
                 'root',
-                'root',
+                'root-password',
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
             );
         }

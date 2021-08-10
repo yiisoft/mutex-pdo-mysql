@@ -28,7 +28,7 @@ build:
 
       tests:
         before:
-          - sed -i "s/'password' => 'root'/'password' => ''/" tests/TestCase.php
+          - sed -i "s/'root-password'/''/" tests/TestCase.php
           - 'mysql -u root -e "CREATE DATABASE yiitest"'
 
         override:
