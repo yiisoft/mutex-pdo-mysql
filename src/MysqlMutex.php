@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 use Yiisoft\Mutex\MutexInterface;
+use Yiisoft\Mutex\RetryAcquireTrait;
 
 use function sha1;
 
@@ -16,9 +17,10 @@ use function sha1;
  */
 final class MysqlMutex implements MutexInterface
 {
+    use RetryAcquireTrait;
+
     private string $name;
     private PDO $connection;
-    private bool $released = false;
 
     /**
      * @param string $name Mutex name.
@@ -33,66 +35,83 @@ final class MysqlMutex implements MutexInterface
         $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         if ($driverName !== 'mysql') {
-            throw new InvalidArgumentException('MySQL connection instance should be passed. Got ' . $driverName . '.');
+            throw new InvalidArgumentException("MySQL connection instance should be passed. Got $driverName.");
         }
     }
 
     public function __destruct()
     {
-        if (!$this->released) {
-            $this->release();
-        }
+        $this->release();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @see http://dev.mysql.com/doc/refman/5.0/en/miscellaneous-functions.html#function_get-lock
+     * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_get-lock
+     * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_is-free-lock
      */
     public function acquire(int $timeout = 0): bool
     {
-        $statement = $this->connection->prepare('SELECT GET_LOCK(:name, :timeout)');
-        $statement->bindValue(':name', $this->hashLockName($this->name));
-        $statement->bindValue(':timeout', $timeout);
-        $statement->execute();
+        return $this->retryAcquire($timeout, function () use ($timeout): bool {
+            if (!$this->isFreeLock()) {
+                return false;
+            }
 
-        if ($statement->fetchColumn()) {
-            $this->released = false;
-            return true;
-        }
+            $statement = $this->connection->prepare('SELECT GET_LOCK(:name, :timeout)');
+            $statement->bindValue(':name', $this->hashLockName());
+            $statement->bindValue(':timeout', $timeout);
+            $statement->execute();
 
-        return false;
+            return (bool) $statement->fetchColumn();
+        });
     }
 
     /**
      * {@inheritdoc}
      *
-     * @see http://dev.mysql.com/doc/refman/5.0/en/miscellaneous-functions.html#function_release-lock
+     * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_release-lock
+     * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_is-free-lock
      */
     public function release(): void
     {
+        if ($this->isFreeLock()) {
+            return;
+        }
+
         $statement = $this->connection->prepare('SELECT RELEASE_LOCK(:name)');
-        $statement->bindValue(':name', $this->hashLockName($this->name));
+        $statement->bindValue(':name', $this->hashLockName());
         $statement->execute();
 
         if (!$statement->fetchColumn()) {
             throw new RuntimeException("Unable to release lock \"$this->name\".");
         }
-
-        $this->released = true;
     }
 
     /**
-     * Generate hash for lock name to avoid exceeding lock name length limit.
+     * Generates hash for the lock name to avoid exceeding lock name length limit.
      *
-     * @param string $name
-     *
-     * @return string
+     * @return string The generated hash for the lock name.
      *
      * @see https://github.com/yiisoft/yii2/pull/16836
      */
-    private function hashLockName(string $name): string
+    private function hashLockName(): string
     {
-        return sha1($name);
+        return sha1($this->name);
+    }
+
+    /**
+     * Checks whether the lock is free to use (that is, not locked).
+     *
+     * @return bool Whether the lock is free to use.
+     *
+     * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_is-free-lock
+     */
+    private function isFreeLock(): bool
+    {
+        $statement = $this->connection->prepare('SELECT IS_FREE_LOCK(:name)');
+        $statement->bindValue(':name', $this->hashLockName());
+        $statement->execute();
+
+        return (bool) $statement->fetchColumn();
     }
 }
