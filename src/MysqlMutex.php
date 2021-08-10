@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Mutex;
+namespace Yiisoft\Mutex\Mysql;
 
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
+use Yiisoft\Mutex\MutexInterface;
 
 use function sha1;
 

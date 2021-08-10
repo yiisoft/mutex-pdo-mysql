@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Mutex\File;
+namespace Yiisoft\Mutex\Mysql;
 
 use PDO;
 use Yiisoft\Mutex\MutexFactory;
 use Yiisoft\Mutex\MutexInterface;
-use Yiisoft\Mutex\MysqlMutex;
 
 /**
  * Allows creating {@see MysqlMutex} mutex objects.

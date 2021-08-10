@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Mutex\Tests;
+namespace Yiisoft\Mutex\Mysql\Tests;
 
 use Yiisoft\Mutex\MutexInterface;
-use Yiisoft\Mutex\MysqlMutex;
+use Yiisoft\Mutex\Mysql\MysqlMutex;
 
 class MysqlMutexTest
 {

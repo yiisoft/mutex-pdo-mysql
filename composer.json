@@ -30,15 +30,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yiisoft\\Mutex\\": "src"
+            "Yiisoft\\Mutex\\Mysql\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\Mutex\\Tests\\": [
-                "tests",
-                "vendor/yiisoft/mutex/tests"
-            ]
+            "Yiisoft\\Mutex\\Mysql\\Tests\\": "tests"
         }
     },
     "extra": {
