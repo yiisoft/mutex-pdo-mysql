@@ -20,6 +20,7 @@ This library provides a MySQL mutex implementation for [yiisoft/mutex](https://g
 ## Requirements
 
 - PHP 7.4 or higher.
+- `PDO` PHP extension.
 
 ## Installation
 
