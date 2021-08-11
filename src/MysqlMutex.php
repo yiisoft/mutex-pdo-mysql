@@ -52,13 +52,15 @@ final class MysqlMutex implements MutexInterface
      */
     public function acquire(int $timeout = 0): bool
     {
-        return $this->retryAcquire($timeout, function () use ($timeout): bool {
+        $name = $this->hashLockName();
+
+        return $this->retryAcquire($timeout, function () use ($name, $timeout): bool {
             if (!$this->isFreeLock()) {
                 return false;
             }
 
             $statement = $this->connection->prepare('SELECT GET_LOCK(:name, :timeout)');
-            $statement->bindValue(':name', $this->hashLockName());
+            $statement->bindValue(':name', $name);
             $statement->bindValue(':timeout', $timeout);
             $statement->execute();
 
