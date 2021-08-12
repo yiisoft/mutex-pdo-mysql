@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Mutex\Mysql\Tests;
 
+use InvalidArgumentException;
+use PDO;
 use Yiisoft\Mutex\Mysql\MysqlMutex;
 
 use function microtime;
@@ -80,6 +82,16 @@ final class MysqlMutexTest extends TestCase
 
         unset($mutex);
         $this->assertTrue($this->isFreeLock($mutexName));
+    }
+
+    public function testConstructorFailure(): void
+    {
+        $connection = $this->createConfiguredMock(PDO::class, ['getAttribute' => 'pgsql']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('MySQL connection instance should be passed. Got "pgsql".');
+
+        new MysqlMutex('testConstructorFailure', $connection);
     }
 
     private function createMutex(string $name): MysqlMutex
