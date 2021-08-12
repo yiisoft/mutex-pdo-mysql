@@ -66,10 +66,10 @@ final class MysqlMutexTest extends TestCase
         $mutex = $this->createMutex($mutexName);
 
         $mutex->acquire();
-        $this->assertFalse($this->isFreeLock($mutexName));
+        $this->assertFalse($this->isFreeLock($mutex, $mutexName));
 
         $mutex->release();
-        $this->assertTrue($this->isFreeLock($mutexName));
+        $this->assertTrue($this->isFreeLock($mutex, $mutexName));
     }
 
     public function testDestruct(): void
@@ -78,10 +78,15 @@ final class MysqlMutexTest extends TestCase
         $mutex = $this->createMutex($mutexName);
 
         $this->assertTrue($mutex->acquire());
-        $this->assertFalse($this->isFreeLock($mutexName));
+        $this->assertFalse($this->isFreeLock($mutex, $mutexName));
 
         unset($mutex);
-        $this->assertTrue($this->isFreeLock($mutexName));
+
+        $statement = $this->connection()->prepare('SELECT RELEASE_LOCK(:name)');
+        $statement->bindValue(':name', sha1($mutexName));
+        $statement->execute();
+
+        $this->assertFalse((bool) $statement->fetchColumn());
     }
 
     public function testConstructorFailure(): void

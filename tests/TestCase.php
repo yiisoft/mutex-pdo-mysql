@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Yiisoft\Mutex\Mysql\Tests;
 
 use PDO;
+use ReflectionClass;
+use Yiisoft\Mutex\Mysql\MysqlMutex;
+
+use function md5;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -31,12 +35,10 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         return $this->connection;
     }
 
-    protected function isFreeLock(string $name): bool
+    protected function isFreeLock(MysqlMutex $mutex, string $name): bool
     {
-        $statement = $this->connection()->prepare('SELECT IS_FREE_LOCK(:name)');
-        $statement->bindValue(':name', sha1($name));
-        $statement->execute();
+        $locks = (new ReflectionClass($mutex))->getParentClass()->getStaticPropertyValue('currentProcessLocks');
 
-        return (bool) $statement->fetchColumn();
+        return !isset($locks[md5(MysqlMutex::class . $name)]);
     }
 }

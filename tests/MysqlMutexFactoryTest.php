@@ -19,15 +19,15 @@ final class MysqlMutexFactoryTest extends TestCase
         $this->assertInstanceOf(MutexInterface::class, $mutex);
         $this->assertInstanceOf(MysqlMutex::class, $mutex);
 
-        $this->assertFalse($this->isFreeLock($mutexName));
+        $this->assertFalse($this->isFreeLock($mutex, $mutexName));
         $this->assertFalse($mutex->acquire());
         $mutex->release();
 
-        $this->assertTrue($this->isFreeLock($mutexName));
+        $this->assertTrue($this->isFreeLock($mutex, $mutexName));
         $this->assertTrue($mutex->acquire());
-        $this->assertFalse($this->isFreeLock($mutexName));
+        $this->assertFalse($this->isFreeLock($mutex, $mutexName));
 
         $mutex->release();
-        $this->assertTrue($this->isFreeLock($mutexName));
+        $this->assertTrue($this->isFreeLock($mutex, $mutexName));
     }
 }
