@@ -43,7 +43,7 @@ final class MysqlMutex extends Mutex
      * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_get-lock
      * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_is-free-lock
      */
-    public function acquireLock(int $timeout = 0): bool
+    protected function acquireLock(int $timeout = 0): bool
     {
         $statement = $this->connection->prepare('SELECT GET_LOCK(:name, :timeout)');
         $statement->bindValue(':name', $this->lockName);
@@ -59,7 +59,7 @@ final class MysqlMutex extends Mutex
      * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_release-lock
      * @see https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html#function_is-free-lock
      */
-    public function releaseLock(): bool
+    protected function releaseLock(): bool
     {
         $statement = $this->connection->prepare('SELECT RELEASE_LOCK(:name)');
         $statement->bindValue(':name', $this->lockName);
