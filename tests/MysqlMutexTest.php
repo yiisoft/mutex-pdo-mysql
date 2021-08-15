@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Mutex\Mysql\Tests;
 
+use InvalidArgumentException;
+use PDO;
 use Yiisoft\Mutex\Mysql\MysqlMutex;
 
 use function microtime;
@@ -64,10 +66,10 @@ final class MysqlMutexTest extends TestCase
         $mutex = $this->createMutex($mutexName);
 
         $mutex->acquire();
-        $this->assertFalse($this->isFreeLock($mutexName));
+        $this->assertFalse($this->isFreeLock($mutex, $mutexName));
 
         $mutex->release();
-        $this->assertTrue($this->isFreeLock($mutexName));
+        $this->assertTrue($this->isFreeLock($mutex, $mutexName));
     }
 
     public function testDestruct(): void
@@ -76,10 +78,25 @@ final class MysqlMutexTest extends TestCase
         $mutex = $this->createMutex($mutexName);
 
         $this->assertTrue($mutex->acquire());
-        $this->assertFalse($this->isFreeLock($mutexName));
+        $this->assertFalse($this->isFreeLock($mutex, $mutexName));
 
         unset($mutex);
-        $this->assertTrue($this->isFreeLock($mutexName));
+
+        $statement = $this->connection()->prepare('SELECT RELEASE_LOCK(:name)');
+        $statement->bindValue(':name', sha1($mutexName));
+        $statement->execute();
+
+        $this->assertFalse((bool) $statement->fetchColumn());
+    }
+
+    public function testConstructorFailure(): void
+    {
+        $connection = $this->createConfiguredMock(PDO::class, ['getAttribute' => 'pgsql']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('MySQL connection instance should be passed. Got "pgsql".');
+
+        new MysqlMutex('testConstructorFailure', $connection);
     }
 
     private function createMutex(string $name): MysqlMutex
