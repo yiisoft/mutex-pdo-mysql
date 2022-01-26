@@ -37,12 +37,13 @@ jobs:
           - ubuntu-latest
 
         php:
-          - "7.4"
-          - "8.0"
+          - 7.4
+          - 8.0
+          - 8.1
 
         mysql:
-          - "5.7"
-          - "latest"
+          - 5.7
+          - latest
 
     services:
       mysql:
