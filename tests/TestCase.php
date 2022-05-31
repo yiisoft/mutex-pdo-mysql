@@ -37,7 +37,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function isFreeLock(MysqlMutex $mutex, string $name): bool
     {
-        $locks = (new ReflectionClass($mutex))->getParentClass()->getStaticPropertyValue('currentProcessLocks');
+        $locks = (new ReflectionClass($mutex))
+            ->getParentClass()
+            ->getStaticPropertyValue('currentProcessLocks');
 
         return !isset($locks[md5(MysqlMutex::class . $name)]);
     }
