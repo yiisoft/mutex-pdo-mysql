@@ -82,7 +82,9 @@ final class MysqlMutexTest extends TestCase
 
         unset($mutex);
 
-        $statement = $this->connection()->prepare('SELECT RELEASE_LOCK(:name)');
+        $statement = $this
+            ->connection()
+            ->prepare('SELECT RELEASE_LOCK(:name)');
         $statement->bindValue(':name', sha1($mutexName));
         $statement->execute();
 
