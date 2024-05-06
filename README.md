@@ -27,7 +27,7 @@ This library provides a MySQL mutex implementation for [yiisoft/mutex](https://g
 The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
-composer require yiisoft/mutex-pdo-mysql --prefer-dist
+composer require yiisoft/mutex-pdo-mysql
 ```
 
 ## General usage
