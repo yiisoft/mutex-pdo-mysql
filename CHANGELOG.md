@@ -1,6 +1,5 @@
 # Yii MySQL Mutex Change Log
 
-
 ## 1.1.1 under development
 
 - no changes in this release.
