@@ -16,16 +16,14 @@ use function sha1;
 final class MysqlMutex extends Mutex
 {
     private string $lockName;
-    private PDO $connection;
 
     /**
      * @param string $name Mutex name.
      * @param PDO $connection PDO connection instance to use.
      */
-    public function __construct(string $name, PDO $connection)
+    public function __construct(string $name, private PDO $connection)
     {
         $this->lockName = sha1($name);
-        $this->connection = $connection;
 
         /** @var string $driverName */
         $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
