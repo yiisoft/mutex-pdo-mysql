@@ -6,9 +6,9 @@
     <br>
 </p>
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/mutex-pdo-mysql/v/stable.png)](https://packagist.org/packages/yiisoft/mutex-pdo-mysql)
-[![Total Downloads](https://poser.pugx.org/yiisoft/mutex-pdo-mysql/downloads.png)](https://packagist.org/packages/yiisoft/mutex-pdo-mysql)
-[![Build status](https://github.com/yiisoft/mutex-pdo-mysql/workflows/build/badge.svg)](https://github.com/yiisoft/mutex-pdo-mysql/actions?query=workflow%3Abuild)
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/mutex-pdo-mysql/v)](https://packagist.org/packages/yiisoft/mutex-pdo-mysql)
+[![Total Downloads](https://poser.pugx.org/yiisoft/mutex-pdo-mysql/downloads)](https://packagist.org/packages/yiisoft/mutex-pdo-mysql)
+[![Build status](https://github.com/yiisoft/mutex-pdo-mysql/actions/workflows/build.yml/badge.svg)](https://github.com/yiisoft/mutex-pdo-mysql/actions/workflows/build.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/mutex-pdo-mysql/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/mutex-pdo-mysql/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/mutex-pdo-mysql/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/mutex-pdo-mysql/?branch=master)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Fmutex-pdo-mysql%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/mutex-pdo-mysql/master)
