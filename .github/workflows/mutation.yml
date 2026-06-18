@@ -19,6 +19,8 @@ on:
 
 name: mutation test
 
+permissions:
+  contents: read
 jobs:
   mutation:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
@@ -38,7 +40,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:latest
+        image: mysql:9
         env:
           MYSQL_ROOT_PASSWORD: root-password
           MYSQL_DATABASE: yiitest
@@ -48,10 +50,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5
+        with:
+          persist-credentials: false
 
       - name: Install PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45
         with:
           php-version: ${{ matrix.php }}
           extensions: ${{ env.extensions }}
@@ -63,7 +67,7 @@ jobs:
         run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
       - name: Cache dependencies installed with composer
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
