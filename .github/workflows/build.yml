@@ -23,6 +23,12 @@ on:
 
 name: build
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 jobs:
   tests:
     name: PHP ${{ matrix.php }}-mysql-${{ matrix.mysql }}
@@ -46,10 +52,15 @@ jobs:
         mysql:
           - 5.7
           - latest
+        include:
+          - mysql: 5.7
+            mysql-image: mysql:5.7@sha256:dab0a802b44617303694fb17d166501de279c3031ddeb28c56ecf7fcab5ef0da
+          - mysql: latest
+            mysql-image: mysql:9@sha256:55e529b57e06b3da98df40600de2245a0ab4bb4b979e3ead4339349b0b50bf4a
 
     services:
       mysql:
-        image: mysql:${{ matrix.mysql }}
+        image: ${{ matrix.mysql-image }}
         env:
           MYSQL_ROOT_PASSWORD: root-password
           MYSQL_DATABASE: yiitest
@@ -59,10 +70,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
 
       - name: Install PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: ${{ matrix.php }}
           extensions: ${{ env.extensions }}
@@ -71,14 +84,14 @@ jobs:
           tools: composer:v2
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f # 3.2.1
 
       - name: Run tests with phpunit
         run: vendor/bin/phpunit --colors=always --coverage-clover=coverage.xml
 
       - name: Upload coverage to Codecov.
         if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
