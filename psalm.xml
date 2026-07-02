@@ -8,4 +8,8 @@
     <projectFiles>
         <directory name="src" />
     </projectFiles>
+    <issueHandlers>
+        <MissingOverrideAttribute errorLevel="suppress" />
+        <UnusedClass errorLevel="suppress" />
+    </issueHandlers>
 </psalm>
