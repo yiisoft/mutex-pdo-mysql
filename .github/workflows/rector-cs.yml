@@ -21,4 +21,4 @@ jobs:
   rector:
     uses: yiisoft/actions/.github/workflows/rector-cs.yml@master
     with:
-      php: '7.4'
+      php: '8.2'
