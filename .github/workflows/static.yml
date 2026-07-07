@@ -27,4 +27,13 @@ jobs:
       os: >-
         ["ubuntu-latest"]
       php: >-
-        ["7.4", "8.0", "8.1", "8.2", "8.3"]
+        ["8.0", "8.1", "8.2", "8.3"]
+  psalm74:
+    uses: yiisoft/actions/.github/workflows/psalm.yml@master
+    with:
+      extensions: pdo, pdo_mysql
+      psalm-config: psalm74.xml
+      os: >-
+        ["ubuntu-latest"]
+      php: >-
+        ["7.4"]
