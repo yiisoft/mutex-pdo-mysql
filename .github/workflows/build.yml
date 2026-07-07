@@ -38,10 +38,15 @@ jobs:
           - 8.0
           - 8.1
           - 8.2
-          - 8.3
         mysql:
           - mysql:5.7@sha256:dab0a802b44617303694fb17d166501de279c3031ddeb28c56ecf7fcab5ef0da
-          - mysql:9@sha256:55e529b57e06b3da98df40600de2245a0ab4bb4b979e3ead4339349b0b50bf4a
+        include:
+          - os: ubuntu-latest
+            php: 8.3
+            mysql: mysql:5.7@sha256:dab0a802b44617303694fb17d166501de279c3031ddeb28c56ecf7fcab5ef0da
+          - os: ubuntu-latest
+            php: 8.3
+            mysql: mysql:9@sha256:55e529b57e06b3da98df40600de2245a0ab4bb4b979e3ead4339349b0b50bf4a
 
     services:
       mysql:
