@@ -1,23 +1,16 @@
+name: static analysis
+
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
+    paths: &paths
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/static.yml'
+      - 'composer.json'
       - 'psalm.xml'
-
   push:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'psalm.xml'
-
-name: static analysis
+    branches: ['master']
+    paths: *paths
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,6 +18,7 @@ concurrency:
 
 permissions:
   contents: read
+
 jobs:
   psalm:
     uses: yiisoft/actions/.github/workflows/psalm.yml@master
@@ -33,4 +27,13 @@ jobs:
       os: >-
         ["ubuntu-latest"]
       php: >-
-        ["8.2","8.3"]
+        ["8.1", "8.2", "8.3"]
+  psalm74-80:
+    uses: yiisoft/actions/.github/workflows/psalm.yml@master
+    with:
+      extensions: pdo, pdo_mysql
+      psalm-config: psalm74-80.xml
+      os: >-
+        ["ubuntu-latest"]
+      php: >-
+        ["7.4", "8.0"]

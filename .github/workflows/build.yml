@@ -1,27 +1,16 @@
+name: build
+
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
-
+    paths: &paths
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/build.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
   push:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
-
-name: build
+    branches: ['master']
+    paths: *paths
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -29,6 +18,7 @@ concurrency:
 
 permissions:
   contents: read
+
 jobs:
   tests:
     name: PHP ${{ matrix.php }}-mysql-${{ matrix.mysql }}
@@ -43,23 +33,24 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-
         php:
+          - 7.4
+          - 8.0
+          - 8.1
           - 8.2
-          - 8.3
-
         mysql:
-          - 5.7
-          - latest
+          - mysql:5.7@sha256:dab0a802b44617303694fb17d166501de279c3031ddeb28c56ecf7fcab5ef0da
         include:
-          - mysql: 5.7
-            mysql-image: mysql:5.7@sha256:dab0a802b44617303694fb17d166501de279c3031ddeb28c56ecf7fcab5ef0da
-          - mysql: latest
-            mysql-image: mysql:9@sha256:55e529b57e06b3da98df40600de2245a0ab4bb4b979e3ead4339349b0b50bf4a
+          - os: ubuntu-latest
+            php: 8.3
+            mysql: mysql:5.7@sha256:dab0a802b44617303694fb17d166501de279c3031ddeb28c56ecf7fcab5ef0da
+          - os: ubuntu-latest
+            php: 8.3
+            mysql: mysql:9@sha256:55e529b57e06b3da98df40600de2245a0ab4bb4b979e3ead4339349b0b50bf4a
 
     services:
       mysql:
-        image: ${{ matrix.mysql-image }}
+        image: ${{ matrix.mysql }}
         env:
           MYSQL_ROOT_PASSWORD: root-password
           MYSQL_DATABASE: yiitest
