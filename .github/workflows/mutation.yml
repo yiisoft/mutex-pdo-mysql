@@ -1,23 +1,17 @@
+name: mutation test
+
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
+    paths: &paths
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/mutation.yml'
+      - 'composer.json'
+      - 'infection.json.dist'
       - 'psalm.xml'
-
   push:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'psalm.xml'
-
-name: mutation test
+    branches: ['master']
+    paths: *paths
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,6 +19,7 @@ concurrency:
 
 permissions:
   contents: read
+
 jobs:
   mutation:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
@@ -38,7 +33,6 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-
         php:
           - 8.2
 
