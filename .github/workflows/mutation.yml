@@ -79,6 +79,6 @@ jobs:
         run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run infection
-        run: vendor/bin/roave-infection-static-analysis-plugin
+        run: vendor/bin/infection
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
