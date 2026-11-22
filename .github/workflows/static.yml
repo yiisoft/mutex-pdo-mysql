@@ -7,33 +7,24 @@ on:
       - 'tests/**'
       - '.github/workflows/static.yml'
       - 'composer.json'
-      - 'psalm.xml'
+      - 'phpstan.neon'
   push:
     branches: ['master']
     paths: *paths
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-
 jobs:
-  psalm:
-    uses: yiisoft/actions/.github/workflows/psalm.yml@master
+  phpstan:
+    uses: yiisoft/actions/.github/workflows/phpstan.yml@master
     with:
       extensions: pdo, pdo_mysql
       os: >-
         ["ubuntu-latest"]
       php: >-
-        ["8.1", "8.2", "8.3"]
-  psalm74-80:
-    uses: yiisoft/actions/.github/workflows/psalm.yml@master
-    with:
-      extensions: pdo, pdo_mysql
-      psalm-config: psalm74-80.xml
-      os: >-
-        ["ubuntu-latest"]
-      php: >-
-        ["7.4", "8.0"]
+        ["7.4", "8.0", "8.1", "8.2", "8.3"]

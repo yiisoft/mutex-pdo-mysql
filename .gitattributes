@@ -29,7 +29,7 @@
 /.phpunit-watcher.yml   export-ignore
 /infection.json.dist    export-ignore
 /phpunit.xml.dist       export-ignore
-/psalm.xml              export-ignore
+/phpstan.neon           export-ignore
 /tests                  export-ignore
 /docs                   export-ignore
 
