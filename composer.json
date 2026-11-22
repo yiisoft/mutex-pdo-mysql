@@ -34,11 +34,11 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.93",
         "infection/infection": "^0.26.6 || ^0.27.10 || ^0.29.8 || ^0.35.8",
+        "phpstan/phpstan": "^2.3",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^2.3",
         "shipmonk/composer-dependency-analyser": "^1.8",
         "spatie/phpunit-watcher": "^1.23",
-        "vimeo/psalm": "^4.30 || ^5.26.1 || ^6.16.1",
         "yiisoft/code-style": "^1.0"
     },
     "autoload": {
@@ -60,6 +60,7 @@
     },
     "scripts": {
         "dependency-analyser": "composer-dependency-analyser",
+        "phpstan": "phpstan",
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch",
         "cs-fix": "php-cs-fixer fix"
